@@ -30,7 +30,7 @@ THE SOFTWARE.
         <f:textbox/>
     </f:entry>
     <f:advanced>
-        <f:entry field="rev" title="Revision">
+        <f:entry field="revision" title="Revision">
             <f:textbox/>
         </f:entry>
         <f:entry field="requiresWorkspaceForPolling" title="Requires workspace for polling?">

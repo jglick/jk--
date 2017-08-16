@@ -50,7 +50,7 @@ public class UserspaceSCM extends SCM {
 
     public final ContainerConfig how;
     public final String head;
-    @DataBoundSetter public String rev;
+    @DataBoundSetter public String revision;
     @DataBoundSetter public boolean requiresWorkspaceForPolling;
 
     @DataBoundConstructor public UserspaceSCM(ContainerConfig how, String head) {
@@ -59,15 +59,15 @@ public class UserspaceSCM extends SCM {
     }
 
     @Override public void checkout(Run<?, ?> build, Launcher launcher, FilePath workspace, TaskListener listener, File changelogFile, SCMRevisionState baseline) throws IOException, InterruptedException {
-        String output = how.run(launcher, workspace, listener, "COMMAND=checkout", "HEAD=" + head, "REV=" + rev);
+        String output = how.run(launcher, workspace, listener, "COMMAND=checkout", "HEAD=" + head, "REVISION=" + revision);
         if (!output.isEmpty()) {
             throw new AbortException("output unexpected here");
         }
     }
 
     @Override public SCMRevisionState calcRevisionsFromBuild(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener) throws IOException, InterruptedException {
-        if (rev != null) {
-            return new RevisionStateImpl(rev);
+        if (revision != null) {
+            return new RevisionStateImpl(revision);
         }
         return new RevisionStateImpl(how.run(launcher, workspace, listener, "COMMAND=identify", "HEAD=" + head));
     }
@@ -79,7 +79,7 @@ public class UserspaceSCM extends SCM {
         } else {
             assert launcher != null && workspace != null;
         }
-        String changeAndRev = how.run(launcher, workspace, listener, "COMMAND=compare", "HEAD=" + head, "REV=" + rev, "BASELINE=" + ((RevisionStateImpl) baseline).data);
+        String changeAndRev = how.run(launcher, workspace, listener, "COMMAND=compare", "HEAD=" + head, "REVISION=" + revision, "BASELINE=" + ((RevisionStateImpl) baseline).data);
         int space = changeAndRev.indexOf(' ');
         return new PollingResult(baseline, new RevisionStateImpl(changeAndRev.substring(space + 1)), PollingResult.Change.valueOf(changeAndRev.substring(0, space)));
     }

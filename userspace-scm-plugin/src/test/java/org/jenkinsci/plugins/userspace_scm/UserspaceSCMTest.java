@@ -76,7 +76,7 @@ public class UserspaceSCMTest {
         p.setDefinition(new CpsFlowDefinition("node {checkout userspace(how: " + how + ", head: 'trunk')}", true));
         r.buildAndAssertSuccess(p);
         assertEquals("two", ws.child("wc/f").readToString());
-        p.setDefinition(new CpsFlowDefinition("node {checkout userspace(how: " + how + ", head: 'trunk', rev: '1')}", true));
+        p.setDefinition(new CpsFlowDefinition("node {checkout userspace(how: " + how + ", head: 'trunk', revision: '1')}", true));
         r.buildAndAssertSuccess(p);
         assertEquals("one", ws.child("wc/f").readToString());
     }

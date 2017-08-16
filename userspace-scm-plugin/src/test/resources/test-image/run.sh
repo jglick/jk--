@@ -9,30 +9,30 @@ cd /ws
 # Files named .stuff are ignored for purposes of polling.
 
 case $COMMAND in (checkout)
-    if [ -z "$REV" ]
+    if [ -z "$REVISION" ]
     then
-        REV=`cat $CONFIG/heads/$HEAD`
+        REVISION=`cat $CONFIG/heads/$HEAD`
     fi
     rm -rfv wc >&2
-    cp -rv $CONFIG/trees/$REV wc >&2
-    echo -n $REV > rev
+    cp -rv $CONFIG/trees/$REVISION wc >&2
+    echo -n $REVISION > revision
 ;; (identify)
-    cat rev
+    cat revision
 ;; (compare)
-    if [ -z "$REV" ]
+    if [ -z "$REVISION" ]
     then
-        REV=`cat $CONFIG/heads/$HEAD`
+        REVISION=`cat $CONFIG/heads/$HEAD`
     fi
-    echo Comparing $REV to $BASELINE >&2
-    diff -qr $CONFIG/trees/$BASELINE $CONFIG/trees/$REV | fgrep -v .stuff >&2
-    if [ $REV = $BASELINE ]
+    echo Comparing $REVISION to $BASELINE >&2
+    diff -qr $CONFIG/trees/$BASELINE $CONFIG/trees/$REVISION | fgrep -v .stuff >&2
+    if [ $REVISION = $BASELINE ]
     then
-        echo -n NONE $REV
-    elif [ `diff -qr $CONFIG/trees/$BASELINE $CONFIG/trees/$REV | fgrep -v .stuff | wc -l` -eq 0 ]
+        echo -n NONE $REVISION
+    elif [ `diff -qr $CONFIG/trees/$BASELINE $CONFIG/trees/$REVISION | fgrep -v .stuff | wc -l` -eq 0 ]
     then
-        echo -n INSIGNIFICANT $REV
+        echo -n INSIGNIFICANT $REVISION
     else
-        echo -n SIGNIFICANT $REV
+        echo -n SIGNIFICANT $REVISION
     fi
 ;; (*)
     echo Unknown command: $COMMAND >&2

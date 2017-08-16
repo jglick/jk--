@@ -56,7 +56,7 @@ public class UserspaceSCMSource extends SCMSource {
 
     @Override public SCM build(SCMHead head, SCMRevision revision) {
         UserspaceSCM scm = new UserspaceSCM(how, head.getName());
-        scm.rev = revision.toString();
+        scm.revision = revision.toString();
         return scm;
     }
 
