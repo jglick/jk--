@@ -66,7 +66,10 @@ public class UserspaceSCM extends SCM {
     }
 
     @Override public SCMRevisionState calcRevisionsFromBuild(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener) throws IOException, InterruptedException {
-        return new RevisionStateImpl(how.run(launcher, workspace, listener, "COMMAND=identify", "HEAD=" + head, "REV=" + rev));
+        if (rev != null) {
+            return new RevisionStateImpl(rev);
+        }
+        return new RevisionStateImpl(how.run(launcher, workspace, listener, "COMMAND=identify", "HEAD=" + head));
     }
 
     @Override public PollingResult compareRemoteRevisionWith(Job<?, ?> project, Launcher launcher, FilePath workspace, TaskListener listener, SCMRevisionState baseline) throws IOException, InterruptedException {
