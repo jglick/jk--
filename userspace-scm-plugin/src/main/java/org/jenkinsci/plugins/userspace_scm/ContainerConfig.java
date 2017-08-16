@@ -54,7 +54,7 @@ public class ContainerConfig extends AbstractDescribableImpl<ContainerConfig> {
         this.config = config;
     }
 
-    public String run(@Nonnull Launcher launcher, @CheckForNull FilePath workspace, @Nonnull TaskListener listener, String cmd, String... envs) throws IOException, InterruptedException {
+    public String run(@Nonnull Launcher launcher, @CheckForNull FilePath workspace, @Nonnull TaskListener listener, String... envs) throws IOException, InterruptedException {
         ByteArrayOutputStream userId = new ByteArrayOutputStream();
         launcher.launch().cmds("id", "-u").quiet(true).stdout(userId).start().joinWithTimeout(15, TimeUnit.SECONDS, listener);
         ByteArrayOutputStream groupId = new ByteArrayOutputStream();
@@ -75,7 +75,6 @@ public class ContainerConfig extends AbstractDescribableImpl<ContainerConfig> {
             cmds.add(workspace + ":/ws");
         }
         cmds.add(image);
-        cmds.add(cmd);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         if (launcher.launch().cmds(cmds).stdout(baos).stderr(listener.getLogger()).start().joinWithTimeout(1, TimeUnit.HOURS, listener) != 0) {
             throw new AbortException("Command failed");

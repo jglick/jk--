@@ -59,14 +59,14 @@ public class UserspaceSCM extends SCM {
     }
 
     @Override public void checkout(Run<?, ?> build, Launcher launcher, FilePath workspace, TaskListener listener, File changelogFile, SCMRevisionState baseline) throws IOException, InterruptedException {
-        String output = how.run(launcher, workspace, listener, "checkout", "HEAD=" + head, "REV=" + rev);
+        String output = how.run(launcher, workspace, listener, "COMMAND=checkout", "HEAD=" + head, "REV=" + rev);
         if (!output.isEmpty()) {
             throw new AbortException("output unexpected here");
         }
     }
 
     @Override public SCMRevisionState calcRevisionsFromBuild(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener) throws IOException, InterruptedException {
-        return new RevisionStateImpl(how.run(launcher, workspace, listener, "identify", "HEAD=" + head, "REV=" + rev));
+        return new RevisionStateImpl(how.run(launcher, workspace, listener, "COMMAND=identify", "HEAD=" + head, "REV=" + rev));
     }
 
     @Override public PollingResult compareRemoteRevisionWith(Job<?, ?> project, Launcher launcher, FilePath workspace, TaskListener listener, SCMRevisionState baseline) throws IOException, InterruptedException {
@@ -76,7 +76,7 @@ public class UserspaceSCM extends SCM {
         } else {
             assert launcher != null && workspace != null;
         }
-        String changeAndRev = how.run(launcher, workspace, listener, "compare", "HEAD=" + head, "REV=" + rev, "BASELINE=" + ((RevisionStateImpl) baseline).data);
+        String changeAndRev = how.run(launcher, workspace, listener, "COMMAND=compare", "HEAD=" + head, "REV=" + rev, "BASELINE=" + ((RevisionStateImpl) baseline).data);
         int space = changeAndRev.indexOf(' ');
         return new PollingResult(baseline, new RevisionStateImpl(changeAndRev.substring(space + 1)), PollingResult.Change.valueOf(changeAndRev.substring(0, space)));
     }

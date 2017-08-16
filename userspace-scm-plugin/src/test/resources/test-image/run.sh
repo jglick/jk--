@@ -8,7 +8,7 @@ cd /ws
 # The subdir wc/ is the checkout target.
 # Files named .stuff are ignored for purposes of polling.
 
-case $1 in (checkout)
+case $COMMAND in (checkout)
     if [ -z "$REV" ]
     then
         REV=`cat $CONFIG/heads/$HEAD`
@@ -35,6 +35,6 @@ case $1 in (checkout)
         echo -n SIGNIFICANT $REV
     fi
 ;; (*)
-    echo Unknown command: $1 >&2
+    echo Unknown command: $COMMAND >&2
     exit 1
 ;; esac
