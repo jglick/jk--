@@ -27,31 +27,70 @@ package org.jenkinsci.plugins.userspace_scm;
 import hudson.model.Run;
 import hudson.scm.ChangeLogParser;
 import hudson.scm.ChangeLogSet;
+import hudson.scm.EditType;
 import hudson.scm.RepositoryBrowser;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Iterator;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import org.xml.sax.SAXException;
 
 public class UserspaceChangeLogParser extends ChangeLogParser {
 
+    @SuppressWarnings("rawtypes")
     @Override public ChangeLogSet<? extends ChangeLogSet.Entry> parse(Run build, RepositoryBrowser<?> browser, File changelogFile) throws IOException, SAXException {
-        return new UserspaceChangeLogSet(build, browser);
+        List<UserspaceEntry> entries = new ArrayList<>();
+        try (InputStream is = new FileInputStream(changelogFile); Reader r = new InputStreamReader(is, StandardCharsets.UTF_8); BufferedReader br = new BufferedReader(r)) {
+            String line;
+            String revision = null;
+            String author = null;
+            long timestamp = -1;
+            StringBuilder message = new StringBuilder();
+            List<UserspaceFile> files = new ArrayList<>();
+            while (true) {
+                line = br.readLine();
+                if (line == null || line.isEmpty()) {
+                    if (author != null) {
+                        entries.add(new UserspaceEntry(revision, author, timestamp, message.toString().trim(), new ArrayList<>(files)));
+                    } // else we are just at the end
+                    if (line == null) {
+                        break;
+                    } else {
+                        revision = null;
+                        author = null;
+                        timestamp = -1;
+                        message.setLength(0);
+                        files.clear();
+                    }
+                } else if (revision == null) {
+                    revision = line;
+                } else if (author == null) {
+                    author = line;
+                } else if (timestamp == -1) {
+                    timestamp = Long.parseLong(line);
+                } else if (line.startsWith("> ")) {
+                    if (message.length() > 0) {
+                        message.append('\n');
+                    }
+                    message.append(line.substring(2));
+                } else if (line.startsWith("* ")) {
+                    files.add(new UserspaceFile(line.substring(2), EditType.EDIT));
+                } else if (line.startsWith("+ ")) {
+                    files.add(new UserspaceFile(line.substring(2), EditType.ADD));
+                } else if (line.startsWith("- ")) {
+                    files.add(new UserspaceFile(line.substring(2), EditType.DELETE));
+                } else {
+                    throw new IOException("unrecognized: ‘" + line + "’");
+                }
+            }
+        }
+        return new UserspaceChangeLogSet(build, browser, entries);
     }
 
-    private static class UserspaceChangeLogSet extends ChangeLogSet<ChangeLogSet.Entry> {
-
-        UserspaceChangeLogSet(Run build, RepositoryBrowser<?> browser) {
-            super(build, browser);
-        }
-
-        @Override public boolean isEmptySet() {
-            return true; // TODO
-        }
-
-        @Override public Iterator<Entry> iterator() {
-            return Collections.<Entry>emptySet().iterator(); // TODO
-        }
-    }
 }

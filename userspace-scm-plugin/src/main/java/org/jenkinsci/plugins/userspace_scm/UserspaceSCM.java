@@ -40,8 +40,8 @@ import hudson.scm.SCMDescriptor;
 import hudson.scm.SCMRevisionState;
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-import javax.annotation.CheckForNull;
+import java.nio.charset.StandardCharsets;
+import org.apache.commons.io.FileUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -59,8 +59,15 @@ public class UserspaceSCM extends SCM {
     }
 
     @Override public void checkout(Run<?, ?> build, Launcher launcher, FilePath workspace, TaskListener listener, File changelogFile, SCMRevisionState baseline) throws IOException, InterruptedException {
-        String output = how.run(launcher, workspace, listener, "COMMAND=checkout", "HEAD=" + head, "REVISION=" + revision);
-        if (!output.isEmpty()) {
+        String output = how.run(launcher, workspace, listener,
+            "COMMAND=checkout",
+            "HEAD=" + head,
+            "REVISION=" + revision,
+            "BASELINE=" + (baseline instanceof RevisionStateImpl ? ((RevisionStateImpl) baseline).data : null),
+            "CHANGELOG=" + (changelogFile != null));
+        if (changelogFile != null) {
+            FileUtils.write(changelogFile, output, StandardCharsets.UTF_8);
+        } else if (!output.isEmpty()) {
             throw new AbortException("output unexpected here");
         }
     }
@@ -69,7 +76,8 @@ public class UserspaceSCM extends SCM {
         if (revision != null) {
             return new RevisionStateImpl(revision);
         }
-        return new RevisionStateImpl(how.run(launcher, workspace, listener, "COMMAND=identify", "HEAD=" + head));
+        return new RevisionStateImpl(how.run(launcher, workspace, listener,
+            "COMMAND=identify"));
     }
 
     @Override public PollingResult compareRemoteRevisionWith(Job<?, ?> project, Launcher launcher, FilePath workspace, TaskListener listener, SCMRevisionState baseline) throws IOException, InterruptedException {
@@ -79,9 +87,13 @@ public class UserspaceSCM extends SCM {
         } else {
             assert launcher != null && workspace != null;
         }
-        String changeAndRev = how.run(launcher, workspace, listener, "COMMAND=compare", "HEAD=" + head, "REVISION=" + revision, "BASELINE=" + ((RevisionStateImpl) baseline).data);
-        int space = changeAndRev.indexOf(' ');
-        return new PollingResult(baseline, new RevisionStateImpl(changeAndRev.substring(space + 1)), PollingResult.Change.valueOf(changeAndRev.substring(0, space)));
+        String changeAndRev = how.run(launcher, workspace, listener,
+            "COMMAND=compare",
+            "HEAD=" + head,
+            "REVISION=" + revision,
+            "BASELINE=" + ((RevisionStateImpl) baseline).data);
+        int nl = changeAndRev.indexOf('\n');
+        return new PollingResult(baseline, new RevisionStateImpl(changeAndRev.substring(nl + 1)), PollingResult.Change.valueOf(changeAndRev.substring(0, nl)));
     }
 
     @Override public ChangeLogParser createChangeLogParser() {

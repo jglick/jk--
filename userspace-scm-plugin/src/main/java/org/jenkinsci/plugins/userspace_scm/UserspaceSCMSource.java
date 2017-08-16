@@ -40,7 +40,6 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 // TODO add an SCMNavigator implementation
-// TODO receive webhooks
 
 public class UserspaceSCMSource extends SCMSource {
 

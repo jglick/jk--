@@ -1,32 +1,67 @@
 <div>
     <p>
         An SCM implemented using a Docker image of your choice.
-        Environment variables passed:
-    </p>
-    <dl>
-        <dt><code>HEAD</code></dt>
-        <dd>A branch name, tag name, etc. Format up to the implementation.</dd>
-        <dt><code>REVISION</code></dt>
-        <dd>An exact revision, if not floating according to <code>HEAD</code>. Format up to the implementation.</dd>
-    </dl>
-    <p>
         Commands to be implemented:
     </p>
     <dl>
         <dt><code>checkout</code></dt>
-        <dd>Check out (clone, update, etc.) sources to the workspace.</dd>
+        <dd>
+            <p>
+                Check out (clone, update, etc.) sources to the workspace. Variables:
+            </p>
+            <dl>
+                <dt><code>HEAD</code></dt>
+                <dd>A branch name, tag name, etc. Format up to the implementation.</dd>
+                <dt><code>REVISION</code></dt>
+                <dd>An exact revision, if not floating according to <code>HEAD</code>. Format up to the implementation.</dd>
+                <dt><code>BASELINE</code></dt>
+                <dd>A previous revision, if available.</dd>
+                <dt><code>CHANGELOG</code></dt>
+                <dd><code>true</code> or <code>false</code> according to whether a changelog was requested.</dd>
+            </dl>
+            <p>
+                If a changelog was requested, print changelog entries separated by blank lines.
+                Each should be of the form:
+            </p>
+<pre>revision
+author (email address if possible, or full name, …)
+timestamp (TODO pick a format)
+&gt; message
+&gt; another line of message
+* edited/file/name
++ added/file/name
+- removed/file/name
+</pre>
+        </dd>
         <dt><code>identify</code></dt>
-        <dd>Return a revision string for the current workspace.</dd>
+        <dd>
+            <p>
+                Print a revision string for the current workspace.
+            </p>
+        </dd>
         <dt><code>compare</code></dt>
         <dd>
-            Compare an earlier revision, given as <code>BASELINE</code>, to the current head.
-            A workspace will be mounted if one was requested for polling.
-            Return a change token followed by a space followed by a new revision, where the token may be one of:
+            <p>
+                Compare an earlier revision to the current head.
+                A workspace will be mounted if one was requested for polling.
+                Print a change token followed by a newline followed by a new revision, where the token may be one of:
+            </p>
             <dl>
                 <dt><code>NONE</code></dt><dd>No change: identical.</dd>
                 <dt><code>INSIGNIFICANT</code></dt><dd>Different, but only in ignorable ways.</dd>
                 <dt><code>SIGNIFICANT</code></dt><dd>Different.</dd>
                 <dt><code>INCOMPARABLE</code></dt><dd>Hard to even compare.</dd>
+            </dl>
+            <p>
+                Variables:
+            </p>
+            <dl>
+                <dt><code>HEAD</code></dt>
+                <dd>As for <code>checkout</code>.</dd>
+                <dt><code>REVISION</code></dt>
+                <dd>As for <code>checkout</code>.</dd>
+                <dt><code>BASELINE</code></dt>
+                <dd>The previous revision.</dd>
             </dl>
         </dd>
     </dl>

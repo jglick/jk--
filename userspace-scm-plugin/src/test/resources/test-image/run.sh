@@ -16,6 +16,27 @@ case $COMMAND in (checkout)
     rm -rfv wc >&2
     cp -rv $CONFIG/trees/$REVISION wc >&2
     echo -n $REVISION > revision
+    if [ $CHANGELOG = true -a "$BASELINE" -a $REVISION -gt "$BASELINE" ]
+    then
+        for ((r = $BASELINE + 1; r <= $REVISION; r++))
+        do
+            echo $r
+            echo dev
+            echo 0
+            (cat $CONFIG/messages/$r; echo) | sed -e 's/^/> /'
+            prev=$((r - 1))
+            # TODO parsing output of `diff -qr $CONFIG/trees/$prev $CONFIG/trees/$r` is tricky: "Files $CONFIG/trees/$prev/… and $config/trees/$r/… differ" vs. "Only in $CONFIG/trees/$prev: …" (or "Only in $CONFIG/trees/$prev/…: …") etc.
+            case $r in (3)
+                echo '* f'
+                echo '+ f2'
+            ;; (4)
+                echo '+ .stuff'
+            ;; (*)
+                echo TODO for now just hard-coding some file diffs, not for $r
+            esac
+            echo
+        done
+    fi
 ;; (identify)
     cat revision
 ;; (compare)
@@ -27,13 +48,14 @@ case $COMMAND in (checkout)
     diff -qr $CONFIG/trees/$BASELINE $CONFIG/trees/$REVISION | fgrep -v .stuff >&2
     if [ $REVISION = $BASELINE ]
     then
-        echo -n NONE $REVISION
+        echo NONE
     elif [ `diff -qr $CONFIG/trees/$BASELINE $CONFIG/trees/$REVISION | fgrep -v .stuff | wc -l` -eq 0 ]
     then
-        echo -n INSIGNIFICANT $REVISION
+        echo INSIGNIFICANT
     else
-        echo -n SIGNIFICANT $REVISION
+        echo SIGNIFICANT
     fi
+    echo -n $REVISION
 ;; (*)
     echo Unknown command: $COMMAND >&2
     exit 1
