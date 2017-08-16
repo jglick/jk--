@@ -24,6 +24,7 @@
 
 package org.jenkinsci.plugins.userspace_scm;
 
+import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -56,14 +57,17 @@ public class UserspaceSCM extends SCM {
     }
 
     @Override public void checkout(Run<?, ?> build, Launcher launcher, FilePath workspace, TaskListener listener, File changelogFile, SCMRevisionState baseline) throws IOException, InterruptedException {
-        how.run(launcher, workspace, listener, "checkout", "HEAD=" + head, "REV=" + rev);
+        String output = how.run(launcher, workspace, listener, "checkout", "HEAD=" + head, "REV=" + rev);
+        if (!output.isEmpty()) {
+            throw new AbortException("output unexpected here");
+        }
     }
 
     @Override public SCMRevisionState calcRevisionsFromBuild(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener) throws IOException, InterruptedException {
         return null; // TODO
     }
 
-    @Override public PollingResult compareRemoteRevisionWith(Job<?, ?> project, Launcher launcher, FilePath workspace, TaskListener listener, SCMRevisionState baseline) throws IOException, InterruptedException {
+    @Override public PollingResult compareRemoteRevisionWith(Job<?, ?> project, Launcher nullLauncher, FilePath nullWorkspace, TaskListener listener, SCMRevisionState baseline) throws IOException, InterruptedException {
         return PollingResult.NO_CHANGES; // TODO
     }
 
@@ -73,10 +77,6 @@ public class UserspaceSCM extends SCM {
 
     @Override public RepositoryBrowser<?> guessBrowser() {
         return super.guessBrowser(); // TODO
-    }
-
-    @Override public void buildEnvironment(Run<?, ?> build, Map<String, String> env) {
-        super.buildEnvironment(build, env); // TODO
     }
 
     @Override public boolean processWorkspaceBeforeDeletion(Job<?, ?> project, FilePath workspace, Node node) throws IOException, InterruptedException {
@@ -93,6 +93,13 @@ public class UserspaceSCM extends SCM {
 
     @Override public String getKey() {
         return "userspace:" + how.image + ":" + how.config + ":" + head;
+    }
+
+    private static class RevisionStateImpl extends SCMRevisionState {
+        final String data;
+        RevisionStateImpl(String data) {
+            this.data = data;
+        }
     }
 
     @Symbol("userspace")

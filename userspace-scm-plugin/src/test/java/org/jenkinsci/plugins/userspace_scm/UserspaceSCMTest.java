@@ -35,6 +35,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.jvnet.hudson.test.BuildWatcher;
@@ -50,17 +51,42 @@ public class UserspaceSCMTest {
         Assume.assumeThat(new Launcher.LocalLauncher(stdout).launch().cmds("docker", "build", "-t", "userspace-scm-test", new File(UserspaceSCMTest.class.getResource("/test-image/Dockerfile").toURI()).getParent()).stdout(stdout).join(), is(0));
     }
 
+    private WorkflowJob p;
+    private FilePath ws;
+    private String how;
+
+    @Before public void projectWithRepo() throws Exception {
+        p = r.createProject(WorkflowJob.class, "p");
+        ws = r.jenkins.getWorkspaceFor(p);
+        // cf. run.sh explanation:
+        repo("trees/1/f", "one");
+        repo("messages/1", "init");
+        repo("trees/2/f", "two");
+        repo("messages/2", "modified");
+        repo("heads/trunk", "2");
+        how = "container(image: 'userspace-scm-test', config: 'repo')";
+    }
+    private void repo(String path, String text) throws Exception {
+        ws.child("repo/" + path).write(text, null);
+    }
+
     @Test public void checkout() throws Exception {
-        WorkflowJob p = r.createProject(WorkflowJob.class, "p");
-        p.setDefinition(new CpsFlowDefinition("node {checkout userspace(how: container(image: 'userspace-scm-test', config: 'mycfg'), head: 'trunk')}", true));
+        p.setDefinition(new CpsFlowDefinition("node {checkout userspace(how: " + how + ", head: 'trunk')}", true));
         r.buildAndAssertSuccess(p);
-        FilePath trunk = r.jenkins.getWorkspaceFor(p).child("trunk");
-        assertTrue(trunk.exists());
-        assertEquals("mycfg", trunk.readToString());
+        assertEquals("two", ws.child("wc/f").readToString());
+        p.setDefinition(new CpsFlowDefinition("node {checkout userspace(how: " + how + ", head: 'trunk', rev: '1')}", true));
+        r.buildAndAssertSuccess(p);
+        assertEquals("one", ws.child("wc/f").readToString());
+    }
+
+    @Test public void polling() throws Exception {
+        fail("TODO");
+    }
+
+    @Test public void changelog() throws Exception {
+        fail("TODO");
     }
 
     // TODO operations on agents
-    // TODO changelog
-    // TODO polling
 
 }
