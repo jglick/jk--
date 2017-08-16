@@ -24,11 +24,10 @@
 
 package org.jenkinsci.plugins.userspace_scm;
 
-import hudson.model.Action;
+import hudson.Extension;
 import hudson.model.TaskListener;
 import hudson.scm.SCM;
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 import jenkins.scm.api.SCMHead;
 import jenkins.scm.api.SCMHeadEvent;
@@ -36,17 +35,19 @@ import jenkins.scm.api.SCMHeadObserver;
 import jenkins.scm.api.SCMRevision;
 import jenkins.scm.api.SCMSource;
 import jenkins.scm.api.SCMSourceCriteria;
-import jenkins.scm.api.SCMSourceEvent;
+import jenkins.scm.api.SCMSourceDescriptor;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
+
+// TODO add an SCMNavigator implementation
+// TODO receive webhooks
 
 public class UserspaceSCMSource extends SCMSource {
 
-    public final String image;
-    public final String config;
+    public final ContainerConfig how;
 
-    @DataBoundConstructor public UserspaceSCMSource(String image, String config) {
-        this.image = image;
-        this.config = config;
+    @DataBoundConstructor public UserspaceSCMSource(ContainerConfig how) {
+        this.how = how;
     }
 
     @Override protected void retrieve(SCMSourceCriteria criteria, SCMHeadObserver observer, SCMHeadEvent<?> event, TaskListener listener) throws IOException, InterruptedException {
@@ -54,7 +55,7 @@ public class UserspaceSCMSource extends SCMSource {
     }
 
     @Override public SCM build(SCMHead head, SCMRevision revision) {
-        UserspaceSCM scm = new UserspaceSCM(image, config, head.getName());
+        UserspaceSCM scm = new UserspaceSCM(how, head.getName());
         scm.rev = revision.toString();
         return scm;
     }
@@ -73,6 +74,15 @@ public class UserspaceSCMSource extends SCMSource {
     
     @Override protected SCMRevision retrieve(String thingName, TaskListener listener) throws IOException, InterruptedException {
         return super.retrieve(thingName, listener); // TODO
+    }
+
+    @Symbol("userspace")
+    @Extension public static class DescriptorImpl extends SCMSourceDescriptor {
+
+        @Override public String getDisplayName() {
+            return "Userspace";
+        }
+
     }
 
 }

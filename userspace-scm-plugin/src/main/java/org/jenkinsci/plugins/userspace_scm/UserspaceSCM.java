@@ -24,6 +24,7 @@
 
 package org.jenkinsci.plugins.userspace_scm;
 
+import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.Job;
@@ -34,27 +35,28 @@ import hudson.scm.ChangeLogParser;
 import hudson.scm.PollingResult;
 import hudson.scm.RepositoryBrowser;
 import hudson.scm.SCM;
+import hudson.scm.SCMDescriptor;
 import hudson.scm.SCMRevisionState;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 public class UserspaceSCM extends SCM {
 
-    public final String image;
-    public final String config;
+    public final ContainerConfig how;
     public final String head;
     @DataBoundSetter public String rev;
 
-    public UserspaceSCM(String image, String config, String head) {
-        this.image = image;
-        this.config = config;
+    @DataBoundConstructor public UserspaceSCM(ContainerConfig how, String head) {
+        this.how = how;
         this.head = head;
     }
 
     @Override public void checkout(Run<?, ?> build, Launcher launcher, FilePath workspace, TaskListener listener, File changelogFile, SCMRevisionState baseline) throws IOException, InterruptedException {
-        // TODO
+        how.run(launcher, workspace, listener, "checkout", "HEAD=" + head, "REV=" + rev);
     }
 
     @Override public SCMRevisionState calcRevisionsFromBuild(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener) throws IOException, InterruptedException {
@@ -86,11 +88,29 @@ public class UserspaceSCM extends SCM {
     }
 
     @Override public String getType() {
-        return "userspace:" + image;
+        return "userspace";
     }
 
     @Override public String getKey() {
-        return "userspace:" + image + ":" + config;
+        return "userspace:" + how.image + ":" + how.config + ":" + head;
+    }
+
+    @Symbol("userspace")
+    @Extension public static class DescriptorImpl extends SCMDescriptor<UserspaceSCM> {
+
+        public DescriptorImpl() {
+            super(null); // TODO
+        }
+
+        @Override public String getDisplayName() {
+            return "Userspace";
+        }
+
+        @SuppressWarnings("rawtypes")
+        @Override public boolean isApplicable(Job project) {
+            return true;
+        }
+
     }
 
 }
