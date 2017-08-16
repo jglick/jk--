@@ -26,6 +26,8 @@ package org.jenkinsci.plugins.userspace_scm;
 
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.model.TaskListener;
+import hudson.scm.PollingResult;
 import hudson.util.StreamTaskListener;
 import java.io.File;
 import static org.hamcrest.Matchers.*;
@@ -80,7 +82,21 @@ public class UserspaceSCMTest {
     }
 
     @Test public void polling() throws Exception {
-        fail("TODO");
+        p.setDefinition(new CpsFlowDefinition("node {checkout userspace(how: " + how + ", head: 'trunk', requiresWorkspaceForPolling: true)}", true));
+        r.buildAndAssertSuccess(p);
+        assertEquals("two", ws.child("wc/f").readToString());
+        repo("trees/3/f", "three");
+        repo("messages/3", "modified again");
+        repo("heads/trunk", "3");
+        TaskListener l = StreamTaskListener.fromStdout();
+        assertEquals(PollingResult.Change.SIGNIFICANT, p.poll(l).change);
+        assertEquals(PollingResult.Change.NONE, p.poll(l).change);
+        repo("trees/4/f", "three");
+        repo("trees/4/.stuff", "whatever");
+        repo("messages/4", "irrelevant");
+        repo("heads/trunk", "4");
+        assertEquals(PollingResult.Change.INSIGNIFICANT, p.poll(l).change);
+        assertEquals(PollingResult.Change.NONE, p.poll(l).change);
     }
 
     @Test public void changelog() throws Exception {

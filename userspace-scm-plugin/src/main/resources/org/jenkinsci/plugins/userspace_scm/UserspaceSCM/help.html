@@ -1,0 +1,33 @@
+<div>
+    <p>
+        An SCM implemented using a Docker image of your choice.
+        Environment variables passed:
+    </p>
+    <dl>
+        <dt><code>HEAD</code></dt>
+        <dd>A branch name, tag name, etc. Format up to the implementation.</dd>
+        <dt><code>REV</code></dt>
+        <dd>An exact revision, if not floating according to <code>HEAD</code>. Format up to the implementation.</dd>
+    </dl>
+    <p>
+        Commands to be implemented:
+    </p>
+    <dl>
+        <dt><code>checkout</code></dt>
+        <dd>Check out (clone, update, etc.) sources to the workspace.</dd>
+        <dt><code>identify</code></dt>
+        <dd>Return a revision string for the current workspace.</dd>
+        <dt><code>compare</code></dt>
+        <dd>
+            Compare an earlier revision, given as <code>BASELINE</code>, to the current head.
+            A workspace will be mounted if one was requested for polling.
+            Return a change token followed by a space followed by a new revision, where the token may be one of:
+            <dl>
+                <dt><code>NONE</code></dt><dd>No change: identical.</dd>
+                <dt><code>INSIGNIFICANT</code></dt><dd>Different, but only in ignorable ways.</dd>
+                <dt><code>SIGNIFICANT</code></dt><dd>Different.</dd>
+                <dt><code>INCOMPARABLE</code></dt><dd>Hard to even compare.</dd>
+            </dl>
+        </dd>
+    </dl>
+</div>

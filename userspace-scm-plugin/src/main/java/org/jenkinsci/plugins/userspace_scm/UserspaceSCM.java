@@ -41,6 +41,7 @@ import hudson.scm.SCMRevisionState;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import javax.annotation.CheckForNull;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -50,6 +51,7 @@ public class UserspaceSCM extends SCM {
     public final ContainerConfig how;
     public final String head;
     @DataBoundSetter public String rev;
+    @DataBoundSetter public boolean requiresWorkspaceForPolling;
 
     @DataBoundConstructor public UserspaceSCM(ContainerConfig how, String head) {
         this.how = how;
@@ -64,11 +66,19 @@ public class UserspaceSCM extends SCM {
     }
 
     @Override public SCMRevisionState calcRevisionsFromBuild(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener) throws IOException, InterruptedException {
-        return null; // TODO
+        return new RevisionStateImpl(how.run(launcher, workspace, listener, "identify", "HEAD=" + head, "REV=" + rev));
     }
 
-    @Override public PollingResult compareRemoteRevisionWith(Job<?, ?> project, Launcher nullLauncher, FilePath nullWorkspace, TaskListener listener, SCMRevisionState baseline) throws IOException, InterruptedException {
-        return PollingResult.NO_CHANGES; // TODO
+    @Override public PollingResult compareRemoteRevisionWith(Job<?, ?> project, Launcher launcher, FilePath workspace, TaskListener listener, SCMRevisionState baseline) throws IOException, InterruptedException {
+        if (!requiresWorkspaceForPolling) {
+            assert launcher == null && workspace == null;
+            launcher = new Launcher.LocalLauncher(listener);
+        } else {
+            assert launcher != null && workspace != null;
+        }
+        String changeAndRev = how.run(launcher, workspace, listener, "compare", "HEAD=" + head, "REV=" + rev, "BASELINE=" + ((RevisionStateImpl) baseline).data);
+        int space = changeAndRev.indexOf(' ');
+        return new PollingResult(baseline, new RevisionStateImpl(changeAndRev.substring(space + 1)), PollingResult.Change.valueOf(changeAndRev.substring(0, space)));
     }
 
     @Override public ChangeLogParser createChangeLogParser() {
@@ -84,7 +94,7 @@ public class UserspaceSCM extends SCM {
     }
 
     @Override public boolean requiresWorkspaceForPolling() {
-        return false;
+        return requiresWorkspaceForPolling;
     }
 
     @Override public String getType() {

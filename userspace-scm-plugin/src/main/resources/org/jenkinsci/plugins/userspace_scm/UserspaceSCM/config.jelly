@@ -33,5 +33,8 @@ THE SOFTWARE.
         <f:entry field="rev" title="Revision">
             <f:textbox/>
         </f:entry>
+        <f:entry field="requiresWorkspaceForPolling" title="Requires workspace for polling?">
+            <f:checkbox/>
+        </f:entry>
     </f:advanced>
 </j:jelly>
