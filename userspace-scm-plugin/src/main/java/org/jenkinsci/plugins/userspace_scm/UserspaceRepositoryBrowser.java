@@ -21,34 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package org.jenkinsci.plugins.userspace_scm;
 
-import hudson.model.Run;
-import hudson.scm.ChangeLogSet;
 import hudson.scm.RepositoryBrowser;
-import java.util.Iterator;
-import java.util.List;
+import java.io.IOException;
+import java.net.URL;
 
-final class UserspaceChangeLogSet extends ChangeLogSet<UserspaceEntry> {
+class UserspaceRepositoryBrowser extends RepositoryBrowser<UserspaceEntry> {
 
-    private final List<UserspaceEntry> entries;
-
-    UserspaceChangeLogSet(Run<?, ?> build, RepositoryBrowser<?> browser, List<UserspaceEntry> entries) {
-        super(build, browser);
-        this.entries = entries;
-        entries.forEach((e) -> e._setParent(this));
-    }
-    
-    @Override public boolean isEmptySet() {
-        return entries.isEmpty();
-    }
-    
-    @Override public Iterator<UserspaceEntry> iterator() {
-        return entries.iterator();
-    }
-
-    @Override public String toString() {
-        return entries.toString();
+    @Override public URL getChangeSetLink(UserspaceEntry changeSet) throws IOException {
+        String url = changeSet.getUrl();
+        return url != null ? new URL(url) : null;
     }
 
 }

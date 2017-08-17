@@ -31,8 +31,10 @@ import hudson.model.User;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.EditType;
 import hudson.scm.PollingResult;
+import hudson.scm.RepositoryBrowser;
 import hudson.util.StreamTaskListener;
 import java.io.File;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -110,6 +112,7 @@ public class UserspaceSCMTest {
         assertEquals(PollingResult.Change.NONE, p.poll(l).change);
     }
 
+    @SuppressWarnings("unchecked")
     @Test public void changelog() throws Exception {
         p.setDefinition(new CpsFlowDefinition("node {checkout userspace(how: " + how + ", head: 'trunk')}", true));
         assertEquals(Collections.emptyList(), r.buildAndAssertSuccess(p).getChangeSets());
@@ -122,6 +125,8 @@ public class UserspaceSCMTest {
         assertEquals("3", entry.getCommitId());
         assertEquals("modified again", entry.getMsg());
         assertEquals(User.get("dev"), entry.getAuthor());
+        assertEquals("http://nowhere.net/commit/3", ((UserspaceEntry) entry).getUrl());
+        assertEquals(new URL("http://nowhere.net/commit/3"), ((RepositoryBrowser) changeSets.get(0).getBrowser()).getChangeSetLink(entry));
         Set<ChangeLogSet.AffectedFile> affectedFiles = new TreeSet<>(Comparator.comparing(ChangeLogSet.AffectedFile::getPath));
         affectedFiles.addAll(entry.getAffectedFiles());
         Iterator<ChangeLogSet.AffectedFile> affectedFilesIt = affectedFiles.iterator();

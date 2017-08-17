@@ -50,20 +50,22 @@ public class UserspaceChangeLogParser extends ChangeLogParser {
             String line;
             String revision = null;
             String author = null;
+            String url = null;
             long timestamp = -1;
             StringBuilder message = new StringBuilder();
             List<UserspaceFile> files = new ArrayList<>();
             while (true) {
                 line = br.readLine();
                 if (line == null || line.isEmpty()) {
-                    if (author != null) {
-                        entries.add(new UserspaceEntry(revision, author, timestamp, message.toString().trim(), new ArrayList<>(files)));
+                    if (url != null) {
+                        entries.add(new UserspaceEntry(revision, author, url.equals("-") ? null : url, timestamp, message.toString().trim(), new ArrayList<>(files)));
                     } // else we are just at the end
                     if (line == null) {
                         break;
                     } else {
                         revision = null;
                         author = null;
+                        url = null;
                         timestamp = -1;
                         message.setLength(0);
                         files.clear();
@@ -72,6 +74,8 @@ public class UserspaceChangeLogParser extends ChangeLogParser {
                     revision = line;
                 } else if (author == null) {
                     author = line;
+                } else if (url == null) {
+                    url = line;
                 } else if (timestamp == -1) {
                     timestamp = Long.parseLong(line);
                 } else if (line.startsWith("> ")) {

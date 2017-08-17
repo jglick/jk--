@@ -101,7 +101,7 @@ public class UserspaceSCM extends SCM {
     }
 
     @Override public RepositoryBrowser<?> guessBrowser() {
-        return super.guessBrowser(); // TODO
+        return new UserspaceRepositoryBrowser();
     }
 
     @Override public boolean processWorkspaceBeforeDeletion(Job<?, ?> project, FilePath workspace, Node node) throws IOException, InterruptedException {

@@ -22,6 +22,7 @@ case $COMMAND in (checkout)
         do
             echo $r
             echo dev
+            echo http://nowhere.net/commit/$r
             echo 0
             (cat $CONFIG/messages/$r; echo) | sed -e 's/^/> /'
             prev=$((r - 1))

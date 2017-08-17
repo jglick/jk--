@@ -54,6 +54,7 @@ public class ContainerConfig extends AbstractDescribableImpl<ContainerConfig> {
         this.config = config;
     }
 
+    // TODO switch to JSON for I/O
     public String run(@Nonnull Launcher launcher, @CheckForNull FilePath workspace, @Nonnull TaskListener listener, String... envs) throws IOException, InterruptedException {
         ByteArrayOutputStream userId = new ByteArrayOutputStream();
         launcher.launch().cmds("id", "-u").quiet(true).stdout(userId).start().joinWithTimeout(15, TimeUnit.SECONDS, listener);

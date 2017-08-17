@@ -29,18 +29,21 @@ import hudson.scm.ChangeLogSet;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.kohsuke.stapler.export.Exported;
 
 final class UserspaceEntry extends ChangeLogSet.Entry {
 
     private final String revision;
     private final String author;
+    private final String url;
     private final long timestamp;
     private final String message;
     private final List<UserspaceFile> files;
 
-    UserspaceEntry(String revision, String author, long timestamp, String message, List<UserspaceFile> files) {
+    UserspaceEntry(String revision, String author, String url, long timestamp, String message, List<UserspaceFile> files) {
         this.revision = revision;
         this.author = author;
+        this.url = url;
         this.timestamp = timestamp;
         this.message = message;
         this.files = files;
@@ -56,6 +59,11 @@ final class UserspaceEntry extends ChangeLogSet.Entry {
     
     @Override public User getAuthor() {
         return User.get(author); // TODO perhaps look up by email address, etc.
+    }
+
+    @Exported
+    public String getUrl() {
+        return url;
     }
     
     @Override public long getTimestamp() {
@@ -75,7 +83,7 @@ final class UserspaceEntry extends ChangeLogSet.Entry {
     }
 
     @Override public String toString() {
-        return "UserspaceEntry{" + "revision=" + revision + ", author=" + author + ", timestamp=" + timestamp + ", message=" + message + ", files=" + files + '}';
+        return "UserspaceEntry{" + "revision=" + revision + ", author=" + author + ", url=" + url + ", timestamp=" + timestamp + ", message=" + message + ", files=" + files + '}';
     }
 
 }
