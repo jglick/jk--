@@ -28,6 +28,7 @@ import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.Util;
 import hudson.model.Job;
 import hudson.model.Node;
 import hudson.model.Run;
@@ -50,12 +51,20 @@ public class UserspaceSCM extends SCM {
 
     public final ContainerConfig how;
     public final String head;
-    @DataBoundSetter public String revision;
+    private String revision;
     @DataBoundSetter public boolean requiresWorkspaceForPolling;
 
     @DataBoundConstructor public UserspaceSCM(ContainerConfig how, String head) {
         this.how = how;
         this.head = head;
+    }
+
+    public String getRevision() {
+        return revision;
+    }
+
+    @DataBoundSetter public void setRevision(String revision) {
+        this.revision = Util.fixEmpty(revision);
     }
 
     @Override public void checkout(Run<?, ?> build, Launcher launcher, FilePath workspace, TaskListener listener, File changelogFile, SCMRevisionState baseline) throws IOException, InterruptedException {
