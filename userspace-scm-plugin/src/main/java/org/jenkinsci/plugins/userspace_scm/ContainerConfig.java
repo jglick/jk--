@@ -28,6 +28,7 @@ import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.Util;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.model.TaskListener;
@@ -42,16 +43,25 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 public class ContainerConfig extends AbstractDescribableImpl<ContainerConfig> {
 
     public final String image;
     public final String config;
-    // TODO volumes, etc.
+    private String args;
 
     @DataBoundConstructor public ContainerConfig(String image, String config) {
         this.image = image; // TODO sanitize
         this.config = config;
+    }
+
+    public @CheckForNull String getArgs() {
+        return args;
+    }
+
+    @DataBoundSetter public void setArgs(String args) {
+        this.args = Util.fixEmpty(args); // TODO sanitize
     }
 
     // TODO switch to JSON for I/O
@@ -74,6 +84,9 @@ public class ContainerConfig extends AbstractDescribableImpl<ContainerConfig> {
             workspace.mkdirs();
             cmds.add("--volume");
             cmds.add(workspace + ":/ws");
+        }
+        if (args != null) {
+            cmds.addAll(Arrays.asList(Util.tokenize(args)));
         }
         cmds.add(image);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

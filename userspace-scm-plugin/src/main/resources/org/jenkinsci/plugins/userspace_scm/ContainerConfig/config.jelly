@@ -31,4 +31,9 @@ THE SOFTWARE.
     <f:entry field="config" title="Config">
         <f:textbox/>
     </f:entry>
+    <f:advanced>
+        <f:entry field="args" title="Other Docker Arguments">
+            <f:textbox/>
+        </f:entry>
+    </f:advanced>
 </j:jelly>
