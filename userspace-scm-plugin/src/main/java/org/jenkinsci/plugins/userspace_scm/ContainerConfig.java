@@ -73,12 +73,15 @@ public class ContainerConfig extends AbstractDescribableImpl<ContainerConfig> {
         String charsetName = Charset.defaultCharset().name();
         String ug = String.format("%s:%s", userId.toString(charsetName).trim(), groupId.toString(charsetName).trim());
         List<String> cmds = new ArrayList<>(Arrays.asList("docker", "run", "--rm", "--user", ug, "--env", "CONFIG=" + config));
-        for (String env : envs) {
-            if (env.endsWith("=null")) {
+        if (envs.length % 2 != 0) {
+            throw new IllegalArgumentException();
+        }
+        for (int i = 0; i < envs.length; i += 2) {
+            if (envs[i + 1] == null) {
                 continue;
             }
             cmds.add("--env");
-            cmds.add(env);
+            cmds.add(envs[i] + "=" + envs[i + 1]);
         }
         if (workspace != null) {
             workspace.mkdirs();

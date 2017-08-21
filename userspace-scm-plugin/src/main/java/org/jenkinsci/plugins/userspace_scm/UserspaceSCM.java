@@ -69,11 +69,11 @@ public class UserspaceSCM extends SCM {
 
     @Override public void checkout(Run<?, ?> build, Launcher launcher, FilePath workspace, TaskListener listener, File changelogFile, SCMRevisionState baseline) throws IOException, InterruptedException {
         String output = how.run(launcher, workspace, listener,
-            "COMMAND=checkout",
-            "HEAD=" + head,
-            "REVISION=" + revision,
-            "BASELINE=" + (baseline instanceof RevisionStateImpl ? ((RevisionStateImpl) baseline).data : null),
-            "CHANGELOG=" + (changelogFile != null));
+            "COMMAND", "checkout",
+            "HEAD", head,
+            "REVISION", revision,
+            "BASELINE", baseline instanceof RevisionStateImpl ? ((RevisionStateImpl) baseline).data : null,
+            "CHANGELOG", Boolean.toString(changelogFile != null));
         if (changelogFile != null) {
             FileUtils.write(changelogFile, output, StandardCharsets.UTF_8);
         } else if (!output.isEmpty()) {
@@ -86,7 +86,7 @@ public class UserspaceSCM extends SCM {
             return new RevisionStateImpl(revision);
         }
         return new RevisionStateImpl(how.run(launcher, workspace, listener,
-            "COMMAND=identify"));
+            "COMMAND", "identify"));
     }
 
     @Override public PollingResult compareRemoteRevisionWith(Job<?, ?> project, Launcher launcher, FilePath workspace, TaskListener listener, SCMRevisionState baseline) throws IOException, InterruptedException {
@@ -97,10 +97,10 @@ public class UserspaceSCM extends SCM {
             assert launcher != null && workspace != null;
         }
         String changeAndRev = how.run(launcher, workspace, listener,
-            "COMMAND=compare",
-            "HEAD=" + head,
-            "REVISION=" + revision,
-            "BASELINE=" + ((RevisionStateImpl) baseline).data);
+            "COMMAND", "compare",
+            "HEAD", head,
+            "REVISION", revision,
+            "BASELINE", ((RevisionStateImpl) baseline).data);
         int nl = changeAndRev.indexOf('\n');
         return new PollingResult(baseline, new RevisionStateImpl(changeAndRev.substring(nl + 1)), PollingResult.Change.valueOf(changeAndRev.substring(0, nl)));
     }
