@@ -1,8 +1,8 @@
 IMAGE=userspace-scm-demo
 
 copy-plugins:
-	if [ \! -f ../userspace-scm-plugin/target/userspace-scm.hpi -o ../userspace-scm-plugin/target/userspace-scm.hpi -nt target/test-classes/test-dependencies/userspace-scm.hpi ]; then mvn -f .. -DskipTests install; fi
-	if [ \! -f target/test-classes/test-dependencies/index -o pom.xml -nt target/test-classes/test-dependencies/index ]; then mvn test-compile; fi
+	if [ \! -f ../userspace-scm-plugin/target/userspace-scm.hpi ]; then mvn -f .. -DskipTests install; fi
+	if [ \! -f target/test-classes/test-dependencies/index -o pom.xml -nt target/test-classes/test-dependencies/index -o ../userspace-scm-plugin/target/userspace-scm.hpi -nt target/test-classes/test-dependencies/userspace-scm.hpi ]; then mvn test-compile; fi
 	rm -rf docker/plugins
 	mkdir docker/plugins
 	cp -v target/test-classes/test-dependencies/*.hpi docker/plugins

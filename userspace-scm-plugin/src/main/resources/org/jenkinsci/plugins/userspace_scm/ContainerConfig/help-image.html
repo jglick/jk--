@@ -1,6 +1,7 @@
 <div>
     Name of a Docker image (with optional tag) which will respond to various commands, specified as an environment variable <code>COMMAND</code>.
-    Should declare a <code>VOLUME</code> at <code>/ws</code> where a workspace will be mounted, for commands which need one;
+    Should declare a <code>VOLUME</code> at <code>/ws</code> where a workspace will be mounted, for commands which need one
+    (but should check for an environment variable <code>WORKSPACE</code> possibly giving an alternate location);
     should declare an <code>ENTRYPOINT</code> which be passed a command as its first argument, according to usage.
     Certain commands expect output on stdout; informational messages should be sent to stderr.
 </div>

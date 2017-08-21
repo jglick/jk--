@@ -84,9 +84,17 @@ public class ContainerConfig extends AbstractDescribableImpl<ContainerConfig> {
             cmds.add(envs[i] + "=" + envs[i + 1]);
         }
         if (workspace != null) {
+            String workspacePath;
             workspace.mkdirs();
-            cmds.add("--volume");
-            cmds.add(workspace + ":/ws");
+            if (args != null && args.contains("--volumes-from")) {
+                workspacePath = workspace.getRemote();
+            } else {
+                cmds.add("--volume");
+                cmds.add(workspace + ":/ws");
+                workspacePath = "/ws";
+            }
+            cmds.add("--env");
+            cmds.add("WORKSPACE=" + workspacePath);
         }
         if (args != null) {
             cmds.addAll(Arrays.asList(Util.tokenize(args)));

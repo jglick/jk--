@@ -1,11 +1,6 @@
-#!/bin/bash
+#!/bin/bash -xe
 
-set -x
-
-PATH=/opt/mercurial-4.0.2:$PATH
-
-cd /ws
-ls -la >&2 # TODO
+cd "$WORKSPACE"
 
 case $COMMAND in (checkout)
     if [ "$REVISION" ]
@@ -14,7 +9,7 @@ case $COMMAND in (checkout)
     else
         r="$HEAD"
     fi
-    hg clone --updaterev "$r" "$CONFIG" .
+    hg clone --updaterev "$r" "$CONFIG" . >&2
     # TODO handle changelog
 ;; (identify)
     # TODO

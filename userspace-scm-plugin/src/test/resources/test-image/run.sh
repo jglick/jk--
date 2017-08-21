@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /ws
+cd "$WORKSPACE"
 
 # Assumption: workspace contains a dir $CONFIG/trees/ with subdirs named acc. to revisions, representing working trees;
 # and a dir $CONFIG/heads/ with files named acc. to heads, each containing a revision;
