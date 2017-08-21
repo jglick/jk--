@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.12.2">
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.39">
+    <scm class="org.jenkinsci.plugins.userspace_scm.UserspaceSCM" plugin="userspace-scm@1.0-SNAPSHOT">
+      <how>
+        <image>scm-impl</image>
+        <config>http://jenkins:8000/</config>
+        <args>--link jenkins</args>
+      </how>
+      <head>default</head>
+      <requiresWorkspaceForPolling>false</requiresWorkspaceForPolling>
+    </scm>
+    <scriptPath>Jenkinsfile</scriptPath>
+    <lightweight>true</lightweight>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
