@@ -34,10 +34,10 @@ THE SOFTWARE.
         </j:forEach>
     </ol>
     <table class="pane" style="border:none">
-        <j:forEach var="cs" items="${it.items}" varStatus="loop">
+        <j:forEach var="cs" items="${it.items}">
             <tr class="pane">
                 <td colspan="2" class="changeset">
-                    <a name="detail${loop.index}"></a>
+                    <a name="detail-${cs.commitId}"></a>
                     <div class="changeset-message">
                         <b>
                             Change

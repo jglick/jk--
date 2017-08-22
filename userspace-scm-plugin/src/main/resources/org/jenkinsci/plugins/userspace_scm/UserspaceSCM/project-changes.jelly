@@ -38,7 +38,7 @@ THE SOFTWARE.
             (<i:formatDate value="${b.timestamp.time}" type="both" dateStyle="medium" timeStyle="medium"/>)</a></h2>
 
           <ol>
-            <j:forEach var="c" items="${changeSet.iterator()}" varStatus="loop">
+            <j:forEach var="c" items="${changeSet.iterator()}">
               <li value="${c.revision.class.name == 'java.lang.Integer' ? c.revision : null}">
                 <j:out value="${c.msgAnnotated}"/>
 
@@ -52,8 +52,7 @@ THE SOFTWARE.
                     <a href="${cslink}">link</a>
                   </j:when>
                   <j:otherwise>
-                    <!-- This anchor is meaningless if there is >1 ChangeLogSet/index.jelly for the build; an SCM should rather use an actual commit ID for the anchor: -->
-                    <a href="${b.number}/changes#detail${loop.index}">${%detail}</a>
+                    <a href="${b.number}/changes#detail-${c.commitId}">${%detail}</a>
                   </j:otherwise>
                 </j:choose>
               </li>
