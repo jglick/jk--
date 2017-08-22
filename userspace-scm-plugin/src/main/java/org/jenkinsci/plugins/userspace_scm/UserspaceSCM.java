@@ -129,13 +129,6 @@ public class UserspaceSCM extends SCM {
         return "userspace:" + how.image + ":" + how.config + ":" + head;
     }
 
-    private static class RevisionStateImpl extends SCMRevisionState {
-        final String data;
-        RevisionStateImpl(String data) {
-            this.data = data;
-        }
-    }
-
     @Symbol("userspace")
     @Extension public static class DescriptorImpl extends SCMDescriptor<UserspaceSCM> {
 
