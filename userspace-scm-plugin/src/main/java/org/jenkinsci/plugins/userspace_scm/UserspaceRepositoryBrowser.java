@@ -24,6 +24,8 @@
 
 package org.jenkinsci.plugins.userspace_scm;
 
+import hudson.Extension;
+import hudson.model.Descriptor;
 import hudson.scm.RepositoryBrowser;
 import java.io.IOException;
 import java.net.URL;
@@ -34,5 +36,7 @@ class UserspaceRepositoryBrowser extends RepositoryBrowser<UserspaceEntry> {
         String url = changeSet.getUrl();
         return url != null ? new URL(url) : null;
     }
+
+    @Extension public static class DescriptorImpl extends Descriptor<RepositoryBrowser<?>> {}
 
 }

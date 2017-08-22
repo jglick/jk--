@@ -39,7 +39,7 @@ THE SOFTWARE.
                         <j:set var="cslink" value="${it.browser.getChangeSetLink(cs)}"/>
                         <j:if test="${cslink!=null}">
                             <j:text> / </j:text>
-                            <a href="${cslink}">${browser.descriptor.displayName}</a>
+                            <a href="${cslink}">link</a>
                         </j:if>
                         <j:text>)</j:text>
                     </li>
