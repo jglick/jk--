@@ -1,4 +1,4 @@
-FROM jenkinsci/jenkins:2.60.3
+FROM jenkinsci/jenkins:2.73
 
 USER root
 COPY plugins /usr/share/jenkins/ref/plugins
