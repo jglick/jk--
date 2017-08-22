@@ -19,4 +19,4 @@ else
     STAT_OPT = -c
 endif
 run: build
-	docker run --name jenkins --rm -p 127.0.0.1:8080:8080 -p 127.0.0.1:8000:8000 -v /var/run/docker.sock:/var/run/docker.sock --group-add=$(shell stat $(STAT_OPT) %g /var/run/docker.sock) -v $(shell which docker):/usr/bin/docker $(IMAGE)
+	docker run --name jenkins --rm -p 127.0.0.1:8080:8080 -p 127.0.0.1:8000:8000 -p 127.0.0.1:2222:2222 -v /var/run/docker.sock:/var/run/docker.sock --group-add=$(shell stat $(STAT_OPT) %g /var/run/docker.sock) -v $(shell which docker):/usr/bin/docker $(IMAGE)
