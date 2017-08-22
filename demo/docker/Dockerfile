@@ -11,6 +11,7 @@ RUN hg init /hg && \
     cd /hg && \
     echo 'echo "hello world"' > Jenkinsfile && \
     hg add Jenkinsfile && \
+    (echo '[ui]'; echo 'username = Demo <demo@jenkins.io>') > ~/.hgrc && \
     hg commit -m 'init'
 
 EXPOSE 8000
