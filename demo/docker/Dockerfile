@@ -15,3 +15,5 @@ RUN hg init /hg && \
     hg commit -m 'init'
 
 EXPOSE 8000
+
+ENV JAVA_OPTS -Dstapler.trace=true
