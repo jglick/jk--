@@ -24,14 +24,13 @@ case $COMMAND in (checkout)
 ;; (compare)
     if [ -z "$REVISION" ]
     then
-        # or by hgweb: REVISION=$(wget -q -O - "${CONFIG}"branches | xmlstarlet sel -t -m "//_:tr[@class='tagEntry'][normalize-space(_:td[1]/_:a/text())='$HEAD']" -v 'normalize-space(_:td[2]/_:a)')
         REVISION=$(hg id -r "$HEAD" "$CONFIG")
     fi
     if [ $REVISION = $BASELINE ]
     then
         echo NONE
     else
-        # TODO not possible to differentiate without requiring workspace for polling, or doing a temporary clone
+        # TODO not possible to differentiate without requiring workspace for polling, or doing a temporary clone (preferably using a permanent caching volume)
         echo SIGNIFICANT
     fi
     echo -n $REVISION
@@ -39,3 +38,5 @@ case $COMMAND in (checkout)
     echo Unknown command: $COMMAND >&2
     exit 1
 ;; esac
+
+# TODO when UserspaceSCMSource implemented, use trick from https://stackoverflow.com/a/11900786/12916
