@@ -3,4 +3,5 @@
   <version>2.0</version>
   <useSecurity>false</useSecurity>
   <quietPeriod>0</quietPeriod>
+  <numExecutors>5</numExecutors>
 </hudson>
