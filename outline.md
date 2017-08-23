@@ -49,8 +49,8 @@ Expect to see demonstrations of different approaches to the same problem which i
 * Maven project
     * obvious and convenient
     * a terrible choice for many reasons, including:
-        * nonstandard execution classpath
-        * Jenkins classes in build JVM
+        * nonstandard execution classpath, breaks some extensions
+        * Jenkins classes in build JVM, including Remoting channel
 
 ## Generic vs. specific publishers
 
