@@ -35,7 +35,14 @@ Expect to see demonstrations of different approaches to the same problem which i
 
 ## Steps vs. wrappers vs. project types
 
-**TODO** freestyle vs. Pipeline, templates, …
+* many plugins offer build steps
+    * some run unique functionality, others mostly package up options
+* “wrappers” set an environment for nested steps
+    * details of how to run the actual step left to the job definition
+* Pipeline jobs can interleave these in any order
+    * not so in freestyle, so many plugin features are like `if` statements with a UI
+* steer clear of dedicated project types!
+    * CloudBees Jenkins Enterprise has job templates which offer a plugin-like UI
 
 ## How do I run Maven in a Jenkins job?
 
@@ -52,9 +59,21 @@ Expect to see demonstrations of different approaches to the same problem which i
         * nonstandard execution classpath, breaks some extensions
         * Jenkins classes in build JVM, including Remoting channel
 
+## Demo: different ways of running Maven
+
 ## Generic vs. specific publishers
 
-**TODO** HTML Publisher vs. Javadoc
+* “notifiers” can be treated much like builders
+    * for Pipeline, really there is no difference at all
+* “recorders” more often integrate with Jenkins APIs
+  * but some are more general than others
+* some are hybrids, like Testopia recently put up for adoption
+    * partly sends/receives data from an external server
+    * partly has a special build result, only slightly different from JUnit/XUnit plugins
+
+## Demo: HTML Publisher vs. Javadoc
+
+**TODO** to be developed
 
 # Using SCMs Less
 
@@ -123,12 +142,38 @@ Expect to see demonstrations of different approaches to the same problem which i
 
 # Using DSLs Less
 
+## Pipeline DSL plugins
+
+* some Pipeline integrations expose a DSL beyond step definitions
+* prettier `Jenkinsfile` usage, but
+    * little or no **Pipeline Syntax** support
+    * cannot use basic Pipeline APIs, need to depend on Groovy details
+    * generally unusable from Declarative Pipeline
+
 ## The saga of Docker Pipeline
 
-**TODO** PRs to add `build` arguments
+* offers DSL rooted at `docker` to build & run Docker images
+* `Image.inside`: major feature to run build steps inside container
+    * used by Declarative Pipeline’s `agent docker`
+    * very convenient when it works
+    * but has common, severe, and nonobvious limitations
+* some Credentials and “tool” (Docker CLI) integrations
+    * also available as plain steps
+* rest of DSL is sugar for `sh 'docker …'` commands
+    * some Jenkins fingerprint integration, but no consumer
+    * subject of endless PRs, like tweaking args to `build`
 
 ## Demo: DSL vs. hand-rolled
 
 ## Using Pipeline libraries
 
-**TODO** pinning a library version
+* alternative to DSLs
+    * similar flexibility, but pulled by `Jenkinsfile`, not pushed by plugin
+* available directly from SCM, as branch/tag/revision
+    * extension point could support artifact repositories, etc.
+    * possible to self-publish on GitHub
+* “paired PR” tactic for proposing & testing changes
+
+## Demo: `mvn.groovy` and pinned library versions
+
+**TODO** to be developed
