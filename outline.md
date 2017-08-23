@@ -31,6 +31,13 @@ Expect to see demonstrations of different approaches to the same problem which i
 * Oops, I just updated to 2.27 from 2.3 and I am getting errors! But I do not want to roll back all the way.
 * One team using my server is happier with the old version, can I just update the plugin for everyone else?
 
+## The “build vs. buy” questions
+
+* Do you care more about getting started quickly, or long-term maintainability of your CI/CD system?
+* Are your feature needs complex & idiosyncratic, or straightforward & common?
+* Are the plugins you use maintained well? If not, do you have in-house expertise?
+* Do you enjoy copying & pasting from stackoverflow.com?
+
 # Using Builders & Publishers Less
 
 ## Steps vs. wrappers vs. project types
@@ -64,6 +71,7 @@ Expect to see demonstrations of different approaches to the same problem which i
 ## Generic vs. specific publishers
 
 * “notifiers” can be treated much like builders
+    * example: mail or chat notification
     * for Pipeline, really there is no difference at all
 * “recorders” more often integrate with Jenkins APIs
   * but some are more general than others
