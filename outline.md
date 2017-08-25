@@ -183,5 +183,3 @@ note [JENKINS-32619](https://issues.jenkins-ci.org/browse/JENKINS-32619)
 * “paired PR” tactic for proposing & testing changes
 
 ## Demo: `mvn.groovy` and pinned library versions
-
-**TODO** to be developed

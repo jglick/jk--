@@ -7,14 +7,18 @@ RUN cd /opt && \
 COPY plugins /usr/share/jenkins/ref/plugins
 ADD JENKINS_HOME /usr/share/jenkins/ref
 ADD simple-maven-project-with-tests /hg
-RUN chown -R jenkins.jenkins /usr/share/jenkins/ref/plugins /hg
+ADD lib /pipeline-lib
+RUN chown -R jenkins.jenkins /usr/share/jenkins/ref/plugins /hg /pipeline-lib
 USER jenkins
 
-RUN hg init /hg && \
-    cd /hg && \
+RUN cd /hg && \
+    hg init && \
     (echo '[ui]'; echo 'username = Demo <demo@jenkins.io>') > ~/.hgrc && \
+    hg commit -A -m 'init' && \
+    cd /pipeline-lib && \
+    hg init && \
     hg commit -A -m 'init'
 
-EXPOSE 8000
+EXPOSE 8000 8001
 
 ENV JAVA_OPTS -Dstapler.trace=true -Dhudson.DNSMultiCast.disabled=true -Dhudson.Main.development=true

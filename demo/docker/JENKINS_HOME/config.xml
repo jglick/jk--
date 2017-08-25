@@ -4,4 +4,10 @@
   <useSecurity>false</useSecurity>
   <quietPeriod>0</quietPeriod>
   <numExecutors>5</numExecutors>
+  <disabledAdministrativeMonitors>
+    <string>hudson.model.UpdateCenter$CoreUpdateMonitor</string>
+    <string>jenkins.CLI</string>
+    <string>jenkins.diagnostics.SecurityIsOffMonitor</string>
+    <string>jenkins.security.UpdateSiteWarningsMonitor</string>
+  </disabledAdministrativeMonitors>
 </hudson>

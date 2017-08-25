@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<org.jenkinsci.plugins.workflow.libs.GlobalLibraries plugin="workflow-cps-global-lib@2.8">
+  <libraries>
+    <org.jenkinsci.plugins.workflow.libs.LibraryConfiguration>
+      <name>utils</name>
+      <retriever class="org.jenkinsci.plugins.workflow.libs.SCMSourceRetriever">
+        <scm class="hudson.plugins.mercurial.MercurialSCMSource" plugin="mercurial@2.1">
+          <source>http://localhost:8001/</source>
+          <credentialsId></credentialsId>
+          <traits>
+            <hudson.plugins.mercurial.traits.MercurialInstallationSCMSourceTrait>
+              <installation>hg</installation>
+            </hudson.plugins.mercurial.traits.MercurialInstallationSCMSourceTrait>
+          </traits>
+        </scm>
+      </retriever>
+      <defaultVersion>default</defaultVersion>
+      <implicit>false</implicit>
+      <allowVersionOverride>true</allowVersionOverride>
+    </org.jenkinsci.plugins.workflow.libs.LibraryConfiguration>
+  </libraries>
+</org.jenkinsci.plugins.workflow.libs.GlobalLibraries>
