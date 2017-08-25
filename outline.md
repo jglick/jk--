@@ -81,7 +81,7 @@ Expect to see demonstrations of different approaches to the same problem which i
 
 ## Demo: HTML Publisher vs. Javadoc
 
-**TODO** to be developed
+note [JENKINS-32619](https://issues.jenkins-ci.org/browse/JENKINS-32619)
 
 # Using SCMs Less
 

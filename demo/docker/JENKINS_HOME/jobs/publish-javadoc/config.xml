@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.14.1">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <hudson.triggers.SCMTrigger>
+          <spec>* * * * *</spec>
+          <ignorePostCommitHooks>false</ignorePostCommitHooks>
+        </hudson.triggers.SCMTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.39">
+    <script>node {
+    checkout([$class: &apos;MercurialSCM&apos;, source: &apos;http://localhost:8000/&apos;])
+    def m3 = tool &apos;M3&apos;
+    configFileProvider([configFile(fileId: &apos;jenkins-mirror&apos;, variable: &apos;SETTINGS&apos;)]) {
+        ansiColor(&apos;xterm&apos;) {
+            sh &quot;$m3/bin/mvn -s \$SETTINGS javadoc:javadoc&quot;
+            step([$class: &apos;JavadocArchiver&apos;, javadocDir: &apos;target/site/apidocs/&apos;])
+        }
+    }
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
