@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<com.cloudbees.hudson.plugins.folder.Folder plugin="cloudbees-folder@6.1.2">
+  <actions/>
+  <description></description>
+  <properties>
+    <org.jenkinsci.plugins.workflow.libs.FolderLibraries plugin="workflow-cps-global-lib@2.8">
+      <libraries>
+        <org.jenkinsci.plugins.workflow.libs.LibraryConfiguration>
+          <name>utils</name>
+          <retriever class="org.jenkinsci.plugins.workflow.libs.SCMSourceRetriever">
+            <scm class="hudson.plugins.mercurial.MercurialSCMSource" plugin="mercurial@2.1">
+              <source>http://localhost:8001/</source>
+              <credentialsId></credentialsId>
+              <traits>
+                <hudson.plugins.mercurial.traits.MercurialInstallationSCMSourceTrait>
+                  <installation>hg</installation>
+                </hudson.plugins.mercurial.traits.MercurialInstallationSCMSourceTrait>
+              </traits>
+            </scm>
+          </retriever>
+          <defaultVersion>default</defaultVersion>
+          <implicit>false</implicit>
+          <allowVersionOverride>true</allowVersionOverride>
+        </org.jenkinsci.plugins.workflow.libs.LibraryConfiguration>
+      </libraries>
+    </org.jenkinsci.plugins.workflow.libs.FolderLibraries>
+  </properties>
+  <folderViews class="com.cloudbees.hudson.plugins.folder.views.DefaultFolderViewHolder">
+    <views>
+      <hudson.model.AllView>
+        <owner class="com.cloudbees.hudson.plugins.folder.Folder" reference="../../../.."/>
+        <name>All</name>
+        <filterExecutors>false</filterExecutors>
+        <filterQueue>false</filterQueue>
+        <properties class="hudson.model.View$PropertyList"/>
+      </hudson.model.AllView>
+    </views>
+    <tabBar class="hudson.views.DefaultViewsTabBar"/>
+  </folderViews>
+  <healthMetrics>
+    <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric>
+      <nonRecursive>false</nonRecursive>
+    </com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric>
+  </healthMetrics>
+  <icon class="com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon"/>
+</com.cloudbees.hudson.plugins.folder.Folder>
