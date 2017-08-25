@@ -6,17 +6,15 @@ RUN cd /opt && \
     /opt/apache-maven-3.5.0/bin/mvn -version
 COPY plugins /usr/share/jenkins/ref/plugins
 ADD JENKINS_HOME /usr/share/jenkins/ref
-RUN mkdir /hg
+ADD simple-maven-project-with-tests /hg
 RUN chown -R jenkins.jenkins /usr/share/jenkins/ref/plugins /hg
 USER jenkins
 
 RUN hg init /hg && \
     cd /hg && \
-    echo 'echo "hello world"' > Jenkinsfile && \
-    hg add Jenkinsfile && \
     (echo '[ui]'; echo 'username = Demo <demo@jenkins.io>') > ~/.hgrc && \
-    hg commit -m 'init'
+    hg commit -A -m 'init'
 
 EXPOSE 8000
 
-ENV JAVA_OPTS -Dstapler.trace=true
+ENV JAVA_OPTS -Dstapler.trace=true -Dhudson.DNSMultiCast.disabled=true -Dhudson.Main.development=true
