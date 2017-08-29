@@ -34,9 +34,9 @@ case $COMMAND in (checkout)
         echo SIGNIFICANT
     fi
     echo -n $REVISION
+;; (list)
+    PYTHONPATH=$MERCURIAL_HOME python /rheads.py "$CONFIG"
 ;; (*)
     echo Unknown command: $COMMAND >&2
     exit 1
 ;; esac
-
-# TODO when UserspaceSCMSource implemented, use trick from https://stackoverflow.com/a/11900786/12916

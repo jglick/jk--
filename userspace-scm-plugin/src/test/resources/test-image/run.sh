@@ -57,6 +57,11 @@ case $COMMAND in (checkout)
         echo SIGNIFICANT
     fi
     echo -n $REVISION
+;; (list) # TODO not yet used
+    for h in $CONFIG/heads/*
+    do
+        echo `basename $h` `cat $h`
+    done
 ;; (*)
     echo Unknown command: $COMMAND >&2
     exit 1

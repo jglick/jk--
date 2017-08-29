@@ -25,6 +25,7 @@
 package org.jenkinsci.plugins.userspace_scm;
 
 import hudson.Extension;
+import hudson.Launcher;
 import hudson.model.TaskListener;
 import hudson.scm.SCM;
 import java.io.IOException;
@@ -50,12 +51,21 @@ public class UserspaceSCMSource extends SCMSource {
     }
 
     @Override protected void retrieve(SCMSourceCriteria criteria, SCMHeadObserver observer, SCMHeadEvent<?> event, TaskListener listener) throws IOException, InterruptedException {
-        // TODO
+        String output = how.run(new Launcher.LocalLauncher(listener), null, listener,
+            "COMMAND", "list");
+        // TODO consider criteria, event
+        for (String line : output.trim().split("\n")) {
+            String[] headAndRev = line.split(" ", 2);
+            SCMHead head = new SCMHead(headAndRev[0]);
+            observer.observe(head, new RevisionImpl(head, headAndRev[1]));
+        }
     }
 
     @Override public SCM build(SCMHead head, SCMRevision revision) {
         UserspaceSCM scm = new UserspaceSCM(how, head.getName());
-        scm.setRevision(revision.toString());
+        if (revision != null) {
+            scm.setRevision(revision.toString());
+        }
         return scm;
     }
 

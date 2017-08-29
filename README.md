@@ -1,15 +1,9 @@
 ```bash
 make -C demo run &
-ssh -p 2222 -o StrictHostKeyChecking=no localhost build -s -v userspace-scm
-hg clone http://localhost:8000/ wc
-pushd wc
-echo 'echo(/more/)' >> Jenkinsfile
-hg ci -m more
-hg push
-ssh -p 2222 -o StrictHostKeyChecking=no localhost build -s -v userspace-scm
-ssh -p 2222 -o StrictHostKeyChecking=no localhost list-changes userspace-scm 2
-docker cp jenkins:/var/jenkins_home/jobs/userspace-scm/builds/lastSuccessfulBuild/build.xml - | tr -d '\000'
-docker cp jenkins:/var/jenkins_home/jobs/userspace-scm/builds/lastSuccessfulBuild/changelog0.xml - | tr -d '\000'
-docker cp jenkins:/var/jenkins_home/jobs/userspace-scm/builds/lastSuccessfulBuild/polling.log - | tr -d '\000'
-mvn -f userspace-scm-plugin -DskipTests clean install && ssh -p 2222 -o StrictHostKeyChecking=no localhost install-plugin -restart -name userspace-scm = < userspace-scm-plugin/target/userspace-scm.hpi
+(cd /tmp && rm -rf wc && hg clone http://localhost:8000/ wc && cd wc && echo 'echo(/more/)' >> Jenkinsfile && hg ci -m more && hg push)
+ssh -p 2222 -o NoHostAuthenticationForLocalhost=yes localhost build -s -v scm/userspace/default
+ssh -p 2222 -o NoHostAuthenticationForLocalhost=yes localhost list-changes scm/userspace/default 2
+docker cp jenkins:/var/jenkins_home/jobs/scm/jobs/userspace/branches/default/builds/lastSuccessfulBuild/build.xml - | tr -d '\000'
+docker cp jenkins:/var/jenkins_home/jobs/scm/jobs/userspace/branches/default/builds/lastSuccessfulBuild/changelog0.xml - | tr -d '\000'
+mvn -f userspace-scm-plugin -DskipTests clean install && ssh -p 2222 -o NoHostAuthenticationForLocalhost=yes localhost install-plugin -restart -name userspace-scm = < userspace-scm-plugin/target/userspace-scm.hpi
 ```
