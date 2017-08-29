@@ -141,6 +141,7 @@ note [JENKINS-32619](https://issues.jenkins-ci.org/browse/JENKINS-32619)
 * sandboxing is mandatory but adds runtime overhead
 * unterminated loops, big allocations, etc. stop master from scaling
 * scripts are tied to the master’s version of Java and Groovy
+* Job DSL vs. Jenkins Job Builder
 
 ## Preferring external processes
 
