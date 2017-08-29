@@ -1,3 +1,7 @@
+[How to Use Jenkins Less](https://jenkinsworld20162017.sched.com/event/ALQa/how-to-use-jenkins-less) at Jenkins World 2017
+
+Demo commands:
+
 ```bash
 make -C demo run &
 (cd /tmp && rm -rf wc && hg clone http://localhost:8000/ wc && cd wc && echo 'echo(/more/)' >> Jenkinsfile && hg ci -m more && hg push)
