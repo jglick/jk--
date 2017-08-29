@@ -12,6 +12,11 @@ In this talk we will study some Jenkins capabilities from the perspective of whe
 
 Expect to see demonstrations of different approaches to the same problem which illustrate the trade-offs between tighter integration with the Jenkins UI and other features; vs. transparency, flexibility, and self-reliance.
 
+## Who would want to use Jenkins less?!
+
+* administrators: learn about a new way of evaluating features
+* feature contributors: get a new perspective on value
+
 # Plugins! So many plugins!
 
 ## On a good day
@@ -37,6 +42,13 @@ Expect to see demonstrations of different approaches to the same problem which i
 * Are your feature needs complex & idiosyncratic, or straightforward & common?
 * Are the plugins you use maintained well? If not, do you have in-house expertise?
 * Do you enjoy copying & pasting from stackoverflow.com?
+* How big can your “attack surface” be?
+
+## Scoreboards
+
+* 0: not integrated with Jenkins at all, but stable
+* 5: some special features in use, but manageable
+* 10: tight integration, but way too much baked in
 
 # Using Builders & Publishers Less
 
@@ -50,6 +62,7 @@ Expect to see demonstrations of different approaches to the same problem which i
     * not so in freestyle, so many plugin features are like `if` statements with a UI
 * steer clear of dedicated project types!
     * CloudBees Jenkins Enterprise has job templates which offer a plugin-like UI
+* OH: “How do I build a Ruby project in Jenkins?”
 
 ## How do I run Maven in a Jenkins job?
 
@@ -66,7 +79,24 @@ Expect to see demonstrations of different approaches to the same problem which i
         * nonstandard execution classpath, breaks some extensions
         * Jenkins classes in build JVM, including Remoting channel
 
+## Using Pipeline libraries
+
+* alternative to DSLs
+    * similar flexibility, but pulled by `Jenkinsfile`, not pushed by plugin
+* available directly from SCM, as branch/tag/revision
+    * extension point could support artifact repositories, etc.
+    * possible to self-publish on GitHub
+* “paired PR” tactic for proposing & testing changes
+
 ## Demo: different ways of running Maven
+
+## Scoreboard
+
+* `freestyle-shell`, `simple-sh`: 2
+* `using-lib`: 3
+* `freestyle-builder`: 4
+* `withMaven`: 6
+* `dedicated-project`: 10
 
 ## Generic vs. specific publishers
 
@@ -82,6 +112,46 @@ Expect to see demonstrations of different approaches to the same problem which i
 ## Demo: HTML Publisher vs. Javadoc
 
 note [JENKINS-32619](https://issues.jenkins-ci.org/browse/JENKINS-32619)
+
+## Scoreboard
+
+* `generic`: 3
+* `javadoc`: 6
+
+# Using Groovy Less
+
+## What does Jenkins use Groovy for?
+
+* standard Jenkins scripting language since 2006 at the latest
+* extends Java syntax; familiar to many Java devs, less so to other users
+* `/script` console, freestyle post-build, and many other uses
+    * a custom resumable runtime used for Pipeline
+* runs inside Jenkins JVM, can access same APIs as plugins use
+
+## The pain of Groovy security
+
+* Jenkins admins can run any script they like, but this does not scale
+* so, enter the “sandbox”
+    * most workaday scripts just run
+    * but less-common API calls have to be approved before use
+    * and fidelity to command-line semantics is imperfect
+    * and this is a _very_ complex language → regressions are common
+
+## And the pain of in-process scripting
+
+* sandboxing is mandatory but adds runtime overhead
+* unterminated loops, big allocations, etc. stop master from scaling
+    * [Pipelines At Scale: How Big, How Fast, How Many?](https://jenkinsworld20162017.sched.com/event/ALNC/pipelines-at-scale-how-big-how-fast-how-many)
+* scripts are tied to the master’s version of Java and Groovy
+* Job DSL vs. Jenkins Job Builder
+
+## Preferring external processes
+
+* can run on an agent, taking load off the master
+* container technology can apply quotas, networking rules, …
+* each user picks the exact language and runtime they need
+* embrace Docker!
+* in-process vs. command-line API clients
 
 # Using SCMs Less
 
@@ -109,7 +179,7 @@ note [JENKINS-32619](https://issues.jenkins-ci.org/browse/JENKINS-32619)
     * polling, changelogs
     * no Pipeline support, only freestyle
     * you need to know Apache Ant (do you?) and Groovy (?)
-    * oops, Groovy scripting here is **unsafe** (more later)
+    * oops, Groovy scripting here is **unsafe**
 * Shell Script SCM plugin works less
     * some polling, but no changelogs
     * also no Pipeline support
@@ -117,37 +187,10 @@ note [JENKINS-32619](https://issues.jenkins-ci.org/browse/JENKINS-32619)
 
 ## Demo: userspace vs. dedicated Mercurial SCM
 
-# Using Groovy Less
+## Scoreboard
 
-## What does Jenkins use Groovy for?
-
-* standard Jenkins scripting language since 2006 at the latest
-* extends Java syntax; familiar to many Java devs, less so to other users
-* `/script` console, freestyle post-build, and many other uses
-    * a custom resumable runtime used for Pipeline
-* runs inside Jenkins JVM, can access same APIs as plugins use
-
-## The pain of Groovy security
-
-* Jenkins admins can run any script they like, but this does not scale
-* so, enter the “sandbox”
-    * most workaday scripts just run
-    * but less-common API calls have to be approved before use
-    * and fidelity to command-line semantics is imperfect
-    * and this is a _very_ complex language → regressions are common
-
-## And the pain of in-process scripting
-
-* sandboxing is mandatory but adds runtime overhead
-* unterminated loops, big allocations, etc. stop master from scaling
-* scripts are tied to the master’s version of Java and Groovy
-* Job DSL vs. Jenkins Job Builder
-
-## Preferring external processes
-
-* can run on an agent, taking load off the master
-* container technology can apply quotas, networking rules, …
-* each user picks the exact language and runtime they need
+* `userspace`: 4
+* `dedicated`: 7
 
 # Using DSLs Less
 
@@ -171,16 +214,11 @@ note [JENKINS-32619](https://issues.jenkins-ci.org/browse/JENKINS-32619)
 * rest of DSL is sugar for `sh 'docker …'` commands
     * some Jenkins fingerprint integration, but no consumer
     * subject of endless PRs, like tweaking args to `build`
+* OH: “A bug in this plugin is blocking me. This is supposed to be the way to use Docker!”
 
 ## Demo: DSL vs. hand-rolled
 
-## Using Pipeline libraries
+## Scoreboard
 
-* alternative to DSLs
-    * similar flexibility, but pulled by `Jenkinsfile`, not pushed by plugin
-* available directly from SCM, as branch/tag/revision
-    * extension point could support artifact repositories, etc.
-    * possible to self-publish on GitHub
-* “paired PR” tactic for proposing & testing changes
-
-## Demo: `mvn.groovy` and pinned library versions
+* original: 7
+* revised: 2
