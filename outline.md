@@ -218,6 +218,8 @@ note [JENKINS-32619](https://issues.jenkins-ci.org/browse/JENKINS-32619)
 
 ## Demo: DSL vs. hand-rolled
 
+[`docker-workflow` PR 105](https://github.com/jenkinsci/docker-workflow-plugin/pull/105/files)
+
 ## Scoreboard
 
 * original: 7
