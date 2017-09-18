@@ -1,5 +1,7 @@
 [How to Use Jenkins Less](https://jenkinsworld20162017.sched.com/event/ALQa/how-to-use-jenkins-less) at Jenkins World 2017
 
+[Video](https://youtu.be/Zeqc6--0eQw)
+
 Demo commands:
 
 ```bash
