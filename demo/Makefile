@@ -33,6 +33,5 @@ run: build
 	    -p 127.0.0.1:2222:2222 \
 	    -v /var/run/docker.sock:/var/run/docker.sock \
 	    --group-add=$(shell stat $(STAT_OPT) %g /var/run/docker.sock) \
-	    -v $(shell which docker):/usr/bin/docker \
 	    -v m2repo:/m2repo \
 	    $(IMAGE)
