@@ -13,3 +13,5 @@ docker cp jenkins:/var/jenkins_home/jobs/scm/jobs/userspace/branches/default/bui
 make -C demo build-tool && docker run --rm --env CONFIG=http://jenkins:8000/ --env COMMAND=list --link jenkins scm-impl
 mvn -f userspace-scm-plugin -DskipTests clean install && ssh -p 2222 -o NoHostAuthenticationForLocalhost=yes localhost install-plugin -restart -name userspace-scm = < userspace-scm-plugin/target/userspace-scm.hpi
 ```
+
+[How to evaluate a Jenkins plugin](https://docs.cloudbees.com/docs/cloudbees-ci-kb/latest/client-and-managed-controllers/how-to-evaluate-a-jenkins-plugin) in CloudBees CI knowledge base
